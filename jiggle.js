@@ -1,4 +1,5 @@
-
+const depsMap = Map();
+let currentEffect = null;
 
 function render(element, content) {
     const app = document.querySelector(element);
@@ -8,7 +9,6 @@ function render(element, content) {
     }
 
 }
-
 
 function reactive(obj) {
 
@@ -23,16 +23,30 @@ function reactive(obj) {
         Object.defineProperty(reactiveObj, key, {
             get() {
                 console.log('get', key, value)
+                track(reactiveObj, key)
                 return value
             },
             set(newValue) {
                 console.log('set', key, newValue)
-                value = newValue
-                renderApp()                
+                if (value !== newValue) {
+                    value = newValue
+                    trigger(reactiveObj, key)
+                    renderApp()
+                }
             }
         })
     }
 )
+
+function track(obj, key) {
+    console.log('track', obj, key)
+}
+
+function trigger(obj, key) {
+    console.log('trigger', obj, key)
+}
+
+
 
     
 

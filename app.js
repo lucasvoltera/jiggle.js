@@ -19,6 +19,10 @@ const mockWeatherData = {
 
 }
 
+createEffect(() => {
+        fetchWeather(state.selectedCity)
+    }
+)
 
 let state = reactive({
     selectedCity: 'London',
