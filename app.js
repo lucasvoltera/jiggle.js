@@ -1,74 +1,64 @@
-const mockWeatherData = {
-    "New York": {
-        temperature: 300,
-        humidity: 50,
-        description: "Sunny",
-    },
-
-    "London": {
-        temperature: 290,
-        humidity: 70,
-        description: "Rainy",
-    },
-
-    "Tokyo": {
-        temperature: 310,
-        humidity: 80,
-        description: "Cloudy",
-    },
-
-}
-
-createEffect(() => {
-        fetchWeather(state.selectedCity)
-    }
-)
 
 let state = reactive({
     selectedCity: 'London',
     weather: {
-        temperature: 'N/A',
-        humidity: 'N/A',
-        description: 'N/A',
+      temperature: 'N/A',
+      humidity: 'N/A',
+      description: ''
+    }
+  });
+  
+  const mockWeatherData = {
+    "New York": {
+      temperature: '15°C',
+      humidity: '55%',
+      description: 'Cloudy'
     },
-});
-
-function updateWeather(city) {
-    const weatherData = mockWeatherData[city];
-    state.weather = weatherData;
-    state.selectedCity = city;
-    // renderApp();
-}
-
-async function fetchWeather(city) {
-    await updateWeather(city);
-}
-
-
-function renderApp() {
+    "London": {
+      temperature: '10°C',
+      humidity: '75%',
+      description: 'Rainy'
+    },
+    "Tokyo": {
+      temperature: '22°C',
+      humidity: '65%',
+      description: 'Sunny'
+    },
+    "Sydney": {
+      temperature: '25°C',
+      humidity: '60%',
+      description: 'Sunny'
+    }
+  };
+  
+  function fetchWeather(city) {
+    setTimeout(() => {
+      const weather = mockWeatherData[city]
+  
+      state.weather = weather
+    }, 500)
+  }
+  
+  createEffect(function() {
+    fetchWeather(state.selectedCity);
+  })
+  
+  
+  createEffect(function() {
+    console.log('re-render')
     render('#container', `<select onChange=updateSelectedCity(this.value)>
-            <option value="Tokyo">Tokyo</option>
-            <option value="London">London</option>
-            <option value="New York">New York</option>
-        
-        </select>
-        <div>
-            <p>Temperature: ${state.weather.temperature}</p>
-            <p>Humidity: ${state.weather.humidity}</p>
-            <p>Description: ${state.weather.description}</p>
-
-        </div>
-        `);
-}
-
-renderApp()
-
-function updateSelectedCity(city) {
+    <option value="Tokyo"> Tokyo</option>
+    <option value="London"> London</option>
+    <option value="New York"> New York</option>
+    </select>
+    <div>
+      <p>Temperature: ${state.weather.temperature}</p>
+      <p>Humidity: ${state.weather.humidity}</p>
+      <p>Description: ${state.weather.description}</p>
+    </div>`)
+  })
+  
+  function updateSelectedCity(city) {
     state.selectedCity = city
     fetchWeather(city)
-}
-
-const timeout = 2000; // 2 seconds
-setTimeout(() => {
-    state.message = 'Hello, universe!'
-}, timeout);
+  }
