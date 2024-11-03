@@ -1,4 +1,4 @@
-const depsMap = Map();
+const dependenciesMap = Map();
 let currentEffect = null;
 
 function render(element, content) {
@@ -38,12 +38,58 @@ function reactive(obj) {
     }
 )
 
+function createEffect(fn) {
+    const effect = function effect(...args) {
+    try {
+        currentEffect = effect
+        fn(...args)
+
+    } finally {
+        currentEffect = null
+    }
+}
+
+function recordDependency(obj, key, effect) {
+    let deps = dependenciesMap.get(obj)
+    if (!deps) {
+        deps = new Map()
+        dependenciesMap.set(obj, deps)
+    }
+
+    let dep = deps.get(key)
+    if (!dep) {
+        dep = new Set()
+        deps.set(key, dep)
+    }
+
+    deps.add(effect)
+}
+
 function track(obj, key) {
-    console.log('track', obj, key)
+    if (currentEffect) {
+        recordDependency(obj, key, currentEffect)
+    }
+}
+
+function runEffects(dep) {
+    const effectsToRun = new Set(dep)
+    effectsToRun.forEach((effect) => 
+        effect()
+    )
 }
 
 function trigger(obj, key) {
     console.log('trigger', obj, key)
+    const deps = dependenciesMap.get(obj)
+    if (!deps) {
+        return
+    }
+
+    const dep = deps.get(key)
+    if (dep) {
+        runEffects(dep)
+    }
+
 }
 
 
